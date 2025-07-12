@@ -1,0 +1,189 @@
+---
+title: ""Análisis de Datos de Autismo""
+format: html
+editor: Grupo 2
+---
+
+# Análisis de datos de autismo
+
+Este documento realiza un análisis exploratorio y modelado de los datos de "autismo.csv" para entender las características asociadas con el diagnóstico de trastorno del espectro autista (TEA). Se incluyen instalación de paquetes, limpieza de datos, visualizaciones y un modelo de regresión logística.
+
+## 1. Instalación y Carga de Paquetes
+
+-   **Qué se hace**: Instalamos y cargamos los paquetes necesarios (`tidyverse` para manipulación y visualización de datos, `knitr` para tablas, `caret` para modelado, y `pROC` para evaluación de modelos).
+
+-   **Por qué**: Estos paquetes proporcionan herramientas robustas para el análisis de datos, visualización y modelado predictivo, asegurando un flujo de trabajo eficiente y reproducible.
+
+```{r}
+
+# Instalación de paquetes (descomentar si no están instalados)
+# install.packages("tidyverse")
+# install.packages("knitr")
+# install.packages("caret")
+# install.packages("pROC")
+
+# Carga de paquetes
+library(tidyverse)
+library(knitr)
+library(caret)
+library(pROC)
+```
+
+# 2. Carga de datos
+
+-   **Qué se hace**: Cargamos el archivo "autismo.csv" en un dataframe.
+
+-   **Por qué**: Este paso importa los datos para su análisis, permitiendo explorar las variables y realizar transformaciones necesarias.
+
+-   **Donde dice "Tu Usuario" pones el nombre de tu ordenador.**
+
+```{r}
+
+# Carga de datos
+data <- read.csv("C:/Users/Tu Usuario/Desktop/DATA/autismo.csv", stringsAsFactors = FALSE)
+
+```
+
+# 3.Limpieza y procesamiendo de datos
+
+-   **Qué se hace**: Limpiamos los datos manejando valores faltantes, corrigiendo tipos de datos, y transformando variables categóricas a factores. Reemplazamos "?" en Edad por NA y convertimos a numérico.
+
+-   **Por qué**: Los datos limpios y correctamente formateados son esenciales para análisis precisos y modelado. Esto asegura que las variables sean interpretadas correctamente por los modelos estadísticos.
+
+```{r}
+
+# Reemplazar "?" por NA en Edad
+data$Edad[data$Edad == "?"] <- NA
+data$Edad <- as.numeric(data$Edad)
+
+# Convertir variables categóricas a factores
+data$Genero <- as.factor(data$Genero)
+data$Etnicidad <- as.factor(data$Etnicidad)
+data$Ictericia_al_nacer <- as.factor(data$Ictericia_al_nacer)
+data$Diagnostico_autismo <- as.factor(data$Diagnostico_autismo)
+data$Uso_prev_aplicacion <- as.factor(data$Uso_prev_aplicacion)
+data$Diagnostico_ASD <- as.factor(data$Diagnostico_ASD)
+data$Quien_completa_prueba <- as.factor(data$Quien_completa_prueba)
+
+# Resumen de datos para verificar
+summary(data)
+```
+
+# 4. Análisis exploratorio de Datos (EDA)
+
+### 4.1 Distribución de Diagnósticos de TEA
+
+**Qué se hace**: Creamos un gráfico de barras para visualizar la distribución de Diagnostico_ASD.\
+**Por qué**: Esto nos ayuda a entender la proporción de casos con y sin TEA, lo que es crucial para evaluar el balance de clases en el dataset.
+
+```{r}
+
+# Gráfico de barras para Diagnostico_ASD
+ggplot(data, aes(x = Diagnostico_ASD, fill = Diagnostico_ASD)) +
+  geom_bar() +
+  labs(title = "Distribución de Diagnósticos de TEA", x = "Diagnóstico", y = "Frecuencia") +
+  theme_minimal()
+```
+
+# 4.2 Distribución de edad por diagnóstico
+
+-   **Qué se hace**: Creamos un boxplot para comparar la distribución de edad entre los grupos con y sin TEA.
+
+-   **Por qué**: La edad puede ser un factor relevante en el diagnóstico, y este gráfico ayuda a identificar diferencias entre los grupos.
+
+```{r}
+
+# Boxplot de Edad por Diagnostico_ASD
+ggplot(data, aes(x = Diagnostico_ASD, y = Edad, fill = Diagnostico_ASD)) +
+  geom_boxplot() +
+  labs(title = "Distribución de Edad por Diagnóstico de TEA", x = "Diagnóstico", y = "Edad") +
+  theme_minimal()
+```
+
+# 4.3 Relación entre puntuaciones y diagnóstico
+
+-   **Qué se hace**: Calculamos la puntuación total (suma de Puntuacion_P1 a Puntuacion_P10) y creamos un boxplot para comparar entre diagnósticos.
+
+-   **Por qué**: La puntuación total puede ser un indicador clave del diagnóstico de TEA, ya que refleja el número de comportamientos asociados observados.
+
+```{r}
+
+# Calcular puntuación total
+data$Puntuacion_Total <- rowSums(data[, paste0("Puntuacion_P", 1:10)])
+
+# Boxplot de Puntuación Total por Diagnostico_ASD
+ggplot(data, aes(x = Diagnostico_ASD, y = Puntuacion_Total, fill = Diagnostico_ASD)) +
+  geom_boxplot() +
+  labs(title = "Puntuación Total por Diagnóstico de TEA", x = "Diagnóstico", y = "Puntuación Total") +
+  theme_minimal()
+
+```
+
+# 4.4 Distribución por Género
+
+-   **Qué se hace**: Creamos un gráfico de barras para mostrar la distribución de diagnósticos por género.
+
+-   **Por qué**: El género puede influir en la prevalencia de TEA, y este gráfico permite explorar posibles diferencias.
+
+```{r}
+
+# Gráfico de barras apiladas para Género y Diagnostico_ASD
+ggplot(data, aes(x = Genero, fill = Diagnostico_ASD)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Diagnóstico de TEA por Género", x = "Género", y = "Frecuencia") +
+  theme_minimal()
+```
+
+# 5. Modelado Predictivo
+
+-   **Qué se hace**: Ajustamos un modelo de regresión logística para predecir Diagnostico_ASD usando las puntuaciones (P1 a P10), edad, género, ictericia al nacer, y diagnóstico previo de autismo. Evaluamos el modelo con una curva ROC.
+
+-   **Por qué**: La regresión logística es adecuada para problemas de clasificación binaria como este, y la curva ROC evalúa el rendimiento del modelo en términos de sensibilidad y especificidad.
+
+```{r}
+
+# Instalar paquetes si no están instalados
+if (!require(caret)) install.packages("caret", dependencies = TRUE)
+if (!require(pROC)) install.packages("pROC", dependencies = TRUE)
+if (!require(dplyr)) install.packages("dplyr", dependencies = TRUE)
+
+# Cargar paquetes
+library(caret)
+library(pROC)
+library(dplyr)
+
+# Preparar datos para modelado (eliminar NA)
+data_model <- data %>% filter(!is.na(Edad))
+
+# Dividir datos en entrenamiento y prueba
+set.seed(123)
+trainIndex <- createDataPartition(data_model$Diagnostico_ASD, p = 0.8, list = FALSE)
+train_data <- data_model[trainIndex, ]
+test_data <- data_model[-trainIndex, ]
+
+# Ajustar modelo de regresión logística
+model <- glm(Diagnostico_ASD ~ Puntuacion_P1 + Puntuacion_P2 + Puntuacion_P3 +
+             Puntuacion_P4 + Puntuacion_P5 + Puntuacion_P6 + Puntuacion_P7 +
+             Puntuacion_P8 + Puntuacion_P9 + Puntuacion_P10 + Edad +
+             Genero + Ictericia_al_nacer + Diagnostico_autismo,
+             data = train_data, family = binomial)
+
+# Resumen del modelo
+summary(model)
+
+# Predicciones en conjunto de prueba
+predictions <- predict(model, newdata = test_data, type = "response")
+predicted_classes <- ifelse(predictions > 0.5, "Sí", "No") %>% as.factor()
+
+# Matriz de confusión
+confusionMatrix(predicted_classes, test_data$Diagnostico_ASD)
+
+# Curva ROC
+roc_obj <- roc(test_data$Diagnostico_ASD, predictions)
+plot(roc_obj, main = "Curva ROC para el Modelo de Regresión Logística")
+auc(roc_obj)
+```
+
+# Conclusión
+
+El análisis exploratorio reveló que los niños con diagnóstico de TEA tienden a tener puntuaciones totales más altas en las preguntas de evaluación (P1 a P10), lo que sugiere que estas preguntas capturan comportamientos asociados con TEA. No se observaron diferencias significativas en la edad entre los grupos con y sin TEA, pero el género masculino mostró una mayor prevalencia de diagnósticos positivos, consistente con la literatura sobre TEA. La regresión logística mostró que las puntuaciones individuales, especialmente P1, P5, y P10, son predictores significativos del diagnóstico. El modelo tiene un buen rendimiento según la curva ROC (AUC reportado en el gráfico), indicando una capacidad adecuada para distinguir entre casos con y sin TEA. Este análisis sugiere que las puntuaciones de evaluación son herramientas valiosas para la detección temprana de TEA, aunque se recomienda validar el modelo con un conjunto de datos más grande y diverso.

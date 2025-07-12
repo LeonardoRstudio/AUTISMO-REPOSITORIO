@@ -1,0 +1,91 @@
+
+---
+title: "Documentación de Procedimiento de Resumen de Datos"
+author: "Grupo 2: Arangure Tito Jesús Joseph, Cruz Dominguez Zashiel, Saravia Chacaltana Gabriel Giancarlo, López Achate Leonardo César, García Espinoza Carlos Nicolás, Valencia Palomino Alvaro Armando"
+output: html_document
+---
+
+## Introducción
+
+El análisis de datos es esencial para la toma de decisiones informadas. Este proceso permite obtener estadísticas descriptivas clave, como la media, mediana, desviación estándar, entre otras, que proporcionan una visión clara sobre el comportamiento y la dispersión de los datos. En este documento, se aborda el procedimiento de resumen de datos utilizando el paquete `dplyr` en R, que es una herramienta poderosa para manipular y resumir datos de manera eficiente.
+
+El conjunto de datos utilizado contiene información relacionada con el autismo, con diversas puntuaciones y características de individuos que se evaluaron a través de diversas pruebas. Nuestro objetivo es generar estadísticas descriptivas que nos permitan conocer las tendencias y dispersión de las puntuaciones en las diferentes pruebas.
+
+## Procedimiento de Instalación de Paquetes Necesarios
+
+Para llevar a cabo el análisis de los datos y generar los estadísticos descriptivos, se deben instalar y cargar los siguientes paquetes de R:
+
+1. **`dplyr`**: Este paquete se utiliza para manipular los datos y calcular estadísticas descriptivas.
+2. **`readr`**: Este paquete permite cargar los archivos CSV en R de forma eficiente.
+
+Instalamos los paquetes con el siguiente código:
+
+```{r}
+# Instalar los paquetes necesarios si no están instalados
+if (!require(dplyr)) install.packages("dplyr")
+if (!require(readr)) install.packages("readr")
+```
+
+Una vez instalados, cargamos los paquetes utilizando el siguiente código:
+
+```{r}
+# Cargar los paquetes necesarios
+library(dplyr)
+library(readr)
+```
+
+## Procedimiento para Resumir Datos
+
+Para resumir los datos de un conjunto de datos, utilizaremos el paquete `dplyr`, que incluye funciones como `summary()`, `mean()`, `sd()`, `median()`, entre otras. 
+
+El procedimiento sigue estos pasos:
+
+1. **Cargar el conjunto de datos**: Usamos `read.csv()` para cargar el archivo CSV en R.
+2. **Generar un resumen estadístico básico**: Usamos la función `summary()` para obtener estadísticas generales.
+3. **Calcular estadísticas específicas**: Calculamos la media, mediana y desviación estándar de las columnas relevantes del conjunto de datos.
+
+## Código en Quarto para Generar Estadísticos Descriptivos
+
+El siguiente código en R se utiliza para generar las estadísticas descriptivas del dataset asignado, cambiamos el TuUsuario por el nombre de nuestro computador y ponemos nuestro dataset en la carpeta DATA de nuestro escritorio:
+
+```{r}
+# Cargar el dataset
+data <- read.csv("C:/Users/TuUsuario/Desktop/DATA/autismo.csv")
+
+# Resumen estadístico básico
+summary(data)
+
+# Estadísticas descriptivas para las columnas de interés
+estadisticas <- data %>%
+  summarise(
+    Media_P1 = mean(Puntuacion_P1),
+    Mediana_P1 = median(Puntuacion_P1),
+    Desviacion_P1 = sd(Puntuacion_P1),
+    Media_P2 = mean(Puntuacion_P2),
+    Mediana_P2 = median(Puntuacion_P2),
+    Desviacion_P2 = sd(Puntuacion_P2)
+  )
+
+# Mostrar las estadísticas
+estadisticas
+```
+
+Este código generará un resumen de estadísticas como la media, mediana y desviación estándar para las columnas `Puntuacion_P1` y `Puntuacion_P2`.
+
+## Tabla 1: Resumen Estadístico
+
+| Estadística           | Puntuacion_P1 | Puntuacion_P2 |
+|-----------------------|---------------|---------------|
+| Media                | `r mean(data$Puntuacion_P1)` | `r mean(data$Puntuacion_P2)` |
+| Mediana              | `r median(data$Puntuacion_P1)` | `r median(data$Puntuacion_P2)` |
+| Desviación Estándar  | `r sd(data$Puntuacion_P1)` | `r sd(data$Puntuacion_P2)` |
+
+## Conclusión
+
+Este análisis nos permite comprender mejor la distribución y dispersión de los datos en el conjunto de datos asignado. Al calcular estadísticas descriptivas como la media, la mediana y la desviación estándar, podemos obtener una visión clara de las tendencias en los datos. Además, este procedimiento es esencial para identificar patrones en los datos y para tomar decisiones informadas en base a esta información.
+
+Es importante destacar que el uso de herramientas como `dplyr` en R facilita la manipulación y resumen de grandes volúmenes de datos, lo que mejora la eficiencia y la calidad del análisis.
+
+---
+
+

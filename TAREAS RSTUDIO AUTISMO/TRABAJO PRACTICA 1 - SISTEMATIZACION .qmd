@@ -1,0 +1,117 @@
+
+# Grupo - Integrantes
+
+- Arangure Tito Jesús Joseph
+- Cruz Dominguez Zashiel
+- Saravia Chacaltana Gabriel Giancarlo
+- López Acharte Leonardo César
+- García Espinoza Carlos Nicolas
+- Valencia Palomino Alvaro Armando
+
+---
+
+## 1. Función para calcular el Volumen Tidal (VT)
+
+El volumen tidal es la cantidad de aire inhalado o exhalado en un ciclo respiratorio. Es un parámetro crucial en la evaluación de la función pulmonar.
+
+**Fórmula:**
+Volumen Tidal = Volumen total de aire respirado / Número de respiraciones
+
+**Valores normales:**
+- Adultos: 500-600 ml por respiración
+
+**Desarrollo en RStudio:**
+```{r}
+calcular_volumen_tidal <- function(volumen_total, respiraciones) {
+  vt <- volumen_total / respiraciones
+  return(vt)
+}
+
+# Ejemplo de uso
+calcular_volumen_tidal(6000, 12)  # Devuelve el volumen tidal en ml
+```
+
+**Importancia:**
+El volumen tidal es fundamental para la evaluación de la capacidad pulmonar, especialmente en pacientes con enfermedades respiratorias como el asma o la EPOC.
+
+---
+
+## 2. Función para calcular el Déficit Calórico
+
+El déficit calórico es la diferencia entre las calorías consumidas y las calorías quemadas. Es utilizado para calcular la cantidad de peso que una persona perderá si mantiene este déficit.
+
+**Fórmula:**
+Déficit Calórico = Calorías Consumidas - Calorías Quemadas
+
+**Valores normales:**
+- Un déficit calórico de 500 calorías por día puede resultar en la pérdida de aproximadamente 0.5 kg por semana.
+
+**Desarrollo en RStudio:**
+```{r}
+calcular_deficit_calorico <- function(calorias_consumidas, calorias_quemadas) {
+  deficit <- calorias_consumidas - calorias_quemadas
+  return(deficit)
+}
+
+# Ejemplo de uso
+calcular_deficit_calorico(2000, 2500)  # Devuelve el déficit calórico en calorías
+```
+
+**Importancia:**
+El déficit calórico es un indicador esencial en los planes de pérdida de peso, y su monitoreo es crucial para un manejo adecuado del peso corporal.
+
+---
+
+## 3. Función para calcular el Índice de Resistencia Insulínica (HOMA-IR)
+
+El HOMA-IR es un índice utilizado para medir la resistencia a la insulina y evaluar el riesgo de desarrollar diabetes tipo 2.
+
+**Fórmula:**
+HOMA-IR = (Glucosa en ayunas x Insulina en ayunas) / 405
+
+**Valores normales:**
+- HOMA-IR < 1: Sensibilidad a la insulina normal
+- HOMA-IR > 2.5: Indicativo de resistencia a la insulina
+
+**Desarrollo en RStudio:**
+```{r}
+calcular_homa_ir <- function(glucosa, insulina) {
+  homo_ir <- (glucosa * insulina) / 405
+  return(homo_ir)
+}
+
+# Ejemplo de uso
+calcular_homa_ir(90, 15)  # Devuelve el valor de HOMA-IR
+```
+
+**Importancia:**
+Este índice es útil para detectar la resistencia a la insulina, lo que puede ayudar a prevenir o controlar la diabetes tipo 2.
+
+---
+
+## 4. Función para calcular el Flujo Urinario
+
+El flujo urinario es la cantidad de orina producida por el cuerpo en un período de tiempo determinado. Es un parámetro útil para evaluar la función renal.
+
+**Fórmula:**
+Flujo Urinario = Volumen de orina / Tiempo
+
+**Valores normales:**
+- Adultos: 0.5-1.5 ml/min
+
+**Desarrollo en RStudio:**
+```{r}
+calcular_flujo_urinario <- function(volumen_orina, tiempo) {
+  flujo <- volumen_orina / tiempo
+  return(flujo)
+}
+
+# Ejemplo de uso
+calcular_flujo_urinario(1500, 60)  # Devuelve el flujo urinario en ml/min
+```
+
+**Importancia:**
+El monitoreo del flujo urinario es crucial para detectar insuficiencia renal y otras condiciones urinarias.
+
+---
+
